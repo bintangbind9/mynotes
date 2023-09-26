@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1088317284033",
+    "project_id": "mynotes-app-project-flutter",
+    "storage_bucket": "mynotes-app-project-flutter.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1088317284033:android:e495bf28c25c07d277be40",
+        "android_client_info": {
+          "package_name": "com.bintang.mynotes"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCD2pkSPg5D7_YBpXsiSbI1KPJR13yK1DY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
