@@ -1,6 +1,9 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:mynotes/constants/routes.dart';
+
+import '../constants/routes.dart';
+import '../services/auth/auth_exceptions.dart';
+import '../services/auth/auth_service.dart';
+import '../utilities/show_error_dialog.dart';
 
 class VerifyEmailView extends StatefulWidget {
   const VerifyEmailView({super.key});
@@ -24,14 +27,22 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
               "If You haven't received a verification email yet, press the button below!"),
           TextButton(
             onPressed: () async {
-              final User? user = FirebaseAuth.instance.currentUser;
-              await user?.sendEmailVerification();
+              await AuthService.firebase().sendEmailVerification();
             },
             child: const Text('Send email verification'),
           ),
           TextButton(
             onPressed: () async {
-              await FirebaseAuth.instance.signOut();
+              try {
+                await AuthService.firebase().logOut();
+              } on UserNotLoggedInAuthException {
+                if (context.mounted) {
+                  showErrorDialog(
+                    context,
+                    'Failed logout! User not logged in!',
+                  );
+                }
+              }
               if (context.mounted) {
                 Navigator.of(context).pushNamedAndRemoveUntil(
                   registerRoute,

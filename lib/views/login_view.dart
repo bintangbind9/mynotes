@@ -1,7 +1,8 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../constants/routes.dart';
+import '../services/auth/auth_exceptions.dart';
+import '../services/auth/auth_service.dart';
 import '../utilities/show_error_dialog.dart';
 
 class LoginView extends StatefulWidget {
@@ -60,33 +61,33 @@ class _LoginViewState extends State<LoginView> {
               final email = _email.text;
               final password = _password.text;
               try {
-                await FirebaseAuth.instance.signInWithEmailAndPassword(
+                await AuthService.firebase().login(
                   email: email,
                   password: password,
                 );
-                final user = FirebaseAuth.instance.currentUser;
+                final user = AuthService.firebase().currentUser;
                 if (context.mounted) {
                   Navigator.of(context).pushNamedAndRemoveUntil(
-                    (user?.emailVerified ?? false) ? notesRoute : verifyEmailRoute,
+                    (user?.isEmailVerified ?? false)
+                        ? notesRoute
+                        : verifyEmailRoute,
                     (route) => false,
                   );
                 }
-              } on FirebaseAuthException catch (e) {
-                if (e.code == 'INVALID_LOGIN_CREDENTIALS') {
-                  await showErrorDialog(
-                    context,
-                    'Invalid User or Password!',
-                  );
-                } else {
-                  await showErrorDialog(
-                    context,
-                    'Error: ${e.code}',
-                  );
-                }
-              } catch (e) {
+              } on InvalidUserCredentialAuthException {
                 await showErrorDialog(
                   context,
-                  e.toString(),
+                  'Invalid User or Password!',
+                );
+              } on UserNotLoggedInAuthException {
+                await showErrorDialog(
+                  context,
+                  'Failed Login User!',
+                );
+              } on GenericAuthException {
+                await showErrorDialog(
+                  context,
+                  'Authentication Error!',
                 );
               }
             },
