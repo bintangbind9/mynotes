@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-import '../constants/routes.dart';
-import '../enums/menu_action.dart';
-import '../services/auth/auth_exceptions.dart';
-import '../services/auth/auth_service.dart';
-import '../services/crud/notes_service.dart';
-import '../utilities/show_error_dialog.dart';
+import '../../constants/routes.dart';
+import '../../enums/menu_action.dart';
+import '../../services/auth/auth_exceptions.dart';
+import '../../services/auth/auth_service.dart';
+import '../../services/crud/notes_service.dart';
+import '../../utilities/show_error_dialog.dart';
 
 class NotesView extends StatefulWidget {
   const NotesView({super.key});
@@ -34,8 +34,14 @@ class _NotesViewState extends State<NotesView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Main UI'),
+        title: const Text('Your Notes'),
         actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.of(context).pushNamed(newNoteRoute);
+            },
+            icon: const Icon(Icons.add),
+          ),
           PopupMenuButton<MenuAction>(
             onSelected: (value) async {
               switch (value) {
