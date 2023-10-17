@@ -14,11 +14,16 @@ class NotesService {
   // Make this class singleton
   // What is singleton? that mean if create instance from this class, there is only once instance created in entire app.
   static final NotesService _shared = NotesService._sharedInstance();
-  NotesService._sharedInstance();
+  NotesService._sharedInstance() {
+    _notesStreamController = StreamController<List<DatabaseNote>>.broadcast(
+      onListen: () {
+        _notesStreamController.sink.add(_notes);
+      },
+    );
+  }
   factory NotesService() => _shared;
 
-  final _notesStreamController =
-      StreamController<List<DatabaseNote>>.broadcast();
+  late final StreamController<List<DatabaseNote>> _notesStreamController;
 
   Stream<List<DatabaseNote>> get allNotes => _notesStreamController.stream;
 
