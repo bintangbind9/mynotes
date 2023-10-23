@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../constants/routes.dart';
 import '../../enums/menu_action.dart';
-import '../../services/auth/auth_exceptions.dart';
 import '../../services/auth/auth_service.dart';
 import '../../services/cloud/firebase_cloud_storage.dart';
 import '../../services/cloud/cloud_note.dart';
-import '../../utilities/dialogs/error_dialog.dart';
+import '../../services/auth/bloc/auth_bloc.dart';
+import '../../services/auth/bloc/auth_event.dart';
 import '../../utilities/dialogs/logout_dialog.dart';
 import 'notes_list_view.dart';
 
@@ -44,23 +45,8 @@ class _NotesViewState extends State<NotesView> {
               switch (value) {
                 case MenuAction.logout:
                   final shouldLogout = await showLogOutDialog(context);
-                  if (shouldLogout) {
-                    try {
-                      await AuthService.firebase().logOut();
-                    } on UserNotLoggedInAuthException {
-                      if (context.mounted) {
-                        showErrorDialog(
-                          context,
-                          'Failed logout! User not logged in!',
-                        );
-                      }
-                    }
-                    if (context.mounted) {
-                      Navigator.of(context).pushNamedAndRemoveUntil(
-                        loginRoute,
-                        (_) => false,
-                      );
-                    }
+                  if (shouldLogout && context.mounted) {
+                    context.read<AuthBloc>().add(const AuthEventLogOut());
                   }
                   break;
                 default:
