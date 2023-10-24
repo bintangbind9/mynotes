@@ -5,6 +5,7 @@ import '../constants/routes.dart';
 import '../services/auth/auth_exceptions.dart';
 import '../services/auth/bloc/auth_bloc.dart';
 import '../services/auth/bloc/auth_event.dart';
+import '../services/auth/bloc/auth_state.dart';
 import '../utilities/dialogs/error_dialog.dart';
 
 class LoginView extends StatefulWidget {
@@ -58,33 +59,38 @@ class _LoginViewState extends State<LoginView> {
               hintText: 'Enter Your Password Here',
             ),
           ),
-          TextButton(
-            onPressed: () async {
-              final email = _email.text;
-              final password = _password.text;
-              try {
+          BlocListener<AuthBloc, AuthState>(
+            listener: (context, state) async {
+              if (state is AuthStateLoggedOut) {
+                if (state.exception is InvalidUserCredentialAuthException) {
+                  await showErrorDialog(
+                    context,
+                    'Invalid User or Password!',
+                  );
+                } else if (state.exception is UserNotLoggedInAuthException) {
+                  await showErrorDialog(
+                    context,
+                    'Failed Login User!',
+                  );
+                } else if (state.exception is GenericAuthException) {
+                  await showErrorDialog(
+                    context,
+                    'Authentication Error!',
+                  );
+                }
+              }
+            },
+            child: TextButton(
+              onPressed: () async {
+                final email = _email.text;
+                final password = _password.text;
                 context.read<AuthBloc>().add(AuthEventLogIn(
                       email,
                       password,
                     ));
-              } on InvalidUserCredentialAuthException {
-                await showErrorDialog(
-                  context,
-                  'Invalid User or Password!',
-                );
-              } on UserNotLoggedInAuthException {
-                await showErrorDialog(
-                  context,
-                  'Failed Login User!',
-                );
-              } on GenericAuthException {
-                await showErrorDialog(
-                  context,
-                  'Authentication Error!',
-                );
-              }
-            },
-            child: const Text('Login'),
+              },
+              child: const Text('Login'),
+            ),
           ),
           TextButton(
             onPressed: () {
