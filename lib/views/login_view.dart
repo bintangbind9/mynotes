@@ -6,6 +6,7 @@ import '../services/auth/bloc/auth_bloc.dart';
 import '../services/auth/bloc/auth_event.dart';
 import '../services/auth/bloc/auth_state.dart';
 import '../utilities/dialogs/error_dialog.dart';
+import '../extensions/buildcontext/loc.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -40,39 +41,38 @@ class _LoginViewState extends State<LoginView> {
           if (state.exception is InvalidUserCredentialAuthException) {
             await showErrorDialog(
               context,
-              'Invalid User or Password with the entered credentials!',
+              context.loc.login_error_invalid_user_or_password,
             );
           } else if (state.exception is UserNotLoggedInAuthException) {
             await showErrorDialog(
               context,
-              'Failed Login User!',
+              context.loc.login_error_user_not_logged_in,
             );
           } else if (state.exception is GenericAuthException) {
             await showErrorDialog(
               context,
-              'Authentication Error!',
+              context.loc.login_error_auth_error,
             );
           }
         }
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Login'),
+          title: Text(context.loc.login),
         ),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
           child: SingleChildScrollView(
             child: Column(
               children: [
-                const Text(
-                    'Please log in to your account in order to interact with and create notes!'),
+                Text(context.loc.login_view_prompt),
                 TextField(
                   controller: _email,
                   enableSuggestions: false,
                   autocorrect: false,
                   keyboardType: TextInputType.emailAddress,
-                  decoration: const InputDecoration(
-                    hintText: 'Enter Your Email Here',
+                  decoration: InputDecoration(
+                    hintText: context.loc.email_text_field_placeholder,
                   ),
                 ),
                 TextField(
@@ -80,8 +80,8 @@ class _LoginViewState extends State<LoginView> {
                   obscureText: true,
                   enableSuggestions: false,
                   autocorrect: false,
-                  decoration: const InputDecoration(
-                    hintText: 'Enter Your Password Here',
+                  decoration: InputDecoration(
+                    hintText: context.loc.password_text_field_placeholder,
                   ),
                 ),
                 TextButton(
@@ -93,7 +93,7 @@ class _LoginViewState extends State<LoginView> {
                           password,
                         ));
                   },
-                  child: const Text('Login'),
+                  child: Text(context.loc.login),
                 ),
                 TextButton(
                   onPressed: () {
@@ -101,7 +101,7 @@ class _LoginViewState extends State<LoginView> {
                         .read<AuthBloc>()
                         .add(const AuthEventForgotPassword());
                   },
-                  child: const Text('I forgot my password'),
+                  child: Text(context.loc.login_view_forgot_password),
                 ),
                 TextButton(
                   onPressed: () {
@@ -109,7 +109,7 @@ class _LoginViewState extends State<LoginView> {
                         .read<AuthBloc>()
                         .add(const AuthEventShouldRegister());
                   },
-                  child: const Text('Not registered yet? Register here!'),
+                  child: Text(context.loc.login_view_not_registered_yet),
                 ),
               ],
             ),
